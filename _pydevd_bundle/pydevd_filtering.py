@@ -211,17 +211,19 @@ class FilesFiltering(object):
         new_roots = []
         for root in roots:
             path = self._absolute_normalized_path(root)
-            if pydevd_constants.IS_WINDOWS:
-                new_roots.append(path + '\\')
-            else:
-                new_roots.append(path + '/')
+            new_roots.append(path)
         return new_roots
 
     def _absolute_normalized_path(self, filename):
         '''
         Provides a version of the filename that's absolute and normalized.
         '''
-        return normcase(pydevd_file_utils.absolute_path(filename))
+        path = normcase(pydevd_file_utils.absolute_path(filename))
+        if pydevd_constants.IS_WINDOWS:
+            return path + '\\'
+        else:
+            return path + '/'
+        return path
 
     def set_project_roots(self, project_roots):
         self._project_roots = self._fix_roots(project_roots)

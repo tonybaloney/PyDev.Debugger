@@ -38,7 +38,7 @@ def test_in_project_roots(tmpdir):
     import os.path
     import sys
     assert files_filtering._get_library_roots() == [
-        os.path.normcase(x) for x in files_filtering._get_default_library_roots()]
+        os.path.normcase(x) + '\\' if IS_WINDOWS else '/' for x in files_filtering._get_default_library_roots()]
 
     site_packages = tmpdir.mkdir('site-packages')
     project_dir = tmpdir.mkdir('project')
@@ -66,7 +66,10 @@ def test_in_project_roots(tmpdir):
         check.append((os.path.join(check_path, 'a.py'), find))
 
     for check_path, find in check:
-        assert files_filtering.in_project_roots(check_path) == find
+        try:
+            assert files_filtering.in_project_roots(check_path) == find
+        except:
+            assert files_filtering.in_project_roots(check_path) == find
 
     files_filtering.set_project_roots([])
     files_filtering.set_library_roots([site_packages, site_packages_inside_project_dir])

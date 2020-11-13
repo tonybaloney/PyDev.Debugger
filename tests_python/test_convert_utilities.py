@@ -183,7 +183,10 @@ def test_to_server_and_to_client(tmpdir):
             ]
             pydevd_file_utils.setup_client_server_paths(PATHS_FROM_ECLIPSE_TO_PYTHON)
 
-            assert pydevd_file_utils.map_file_to_server(in_eclipse) == in_python.lower()
+            if pydevd_file_utils.map_file_to_server(in_eclipse) != in_python.lower():
+                raise AssertionError('%s != %s\ntmpdir:%s\nin_eclipse: %s\nin_python: %s\ntest_dir: %s' % (
+                    pydevd_file_utils.map_file_to_server(in_eclipse), in_python.lower()), tmpdir, in_eclipse, in_python, test_dir)
+
             found_in_eclipse = pydevd_file_utils.map_file_to_client(in_python)[0]
             assert found_in_eclipse.endswith('Bar')
 
