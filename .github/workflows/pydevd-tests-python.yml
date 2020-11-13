@@ -12,35 +12,40 @@ jobs:
       fail-fast: false
       matrix:
         name: [
-          "windows-py27-master",
-          "windows-py36-master",
+#           "windows-py27-plain",
+#           "windows-py27-cython",
+#           
+#           "windows-py36-cython",
+#           
+          "ubuntu-py38-plain",
           
-          "ubuntu-py38-master",
-          "ubuntu-pypy3-master",
-          
-          "ubuntu-py38-pip",
-          "macos-py37",
+#           "ubuntu-py38-cython",
+#           "macos-py37-cython",
         ]
         
         include:
-          - name: "windows-py27-master"
+          - name: "windows-py27-plain"
             python: "2.7"
             os: windows-latest
-          - name: "windows-py36-master"
+          - name: "windows-py27-cython"
+            python: "2.7"
+            os: windows-latest
+            cython: "YES"
+          - name: "windows-py36-cython"
             python: "3.6"
             os: windows-latest
-          - name: "ubuntu-py38-master"
+            cython: "YES"
+          - name: "ubuntu-py38-plain"
             python: "3.8"
             os: ubuntu-latest
-          - name: "ubuntu-py38-pip"
+          - name: "ubuntu-py38-cython"
             python: "3.8"
             os: ubuntu-latest
-          - name: "ubuntu-pypy3-master"
-            python: "pypy3"
-            os: ubuntu-latest
-          - name: "macos-py37"
+            cython: "YES"
+          - name: "macos-py37-cython"
             python: "3.7"
             os: macos-latest
+            cython: "YES"
 
     steps:
     - uses: actions/checkout@v1
