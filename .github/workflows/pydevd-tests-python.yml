@@ -61,6 +61,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install wheel
         python -m pip install cython
+        python -m pip install psutil
         python -m pip install numpy
         python -m pip install pytest
         python -m pip install pytest-xdist
@@ -70,5 +71,8 @@ jobs:
         python -m pip install ipython
         python -m pip install untangle
         python -m pip install cherrypy
-        python -m pip install -U PySide
+        python -m pip install PySide2
+#     - name: Install Python 2.7 deps
+#       if: contains(matrix.name, 'py27')
+#       run: |
 

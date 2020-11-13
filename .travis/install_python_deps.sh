@@ -6,17 +6,6 @@ if [[ ("$PYDEVD_USE_CONDA" != "NO" && "$PYDEVD_PYTHON_VERSION" != "2.6") ]]; the
     conda install --yes numpy ipython pytest cython psutil
 fi
 
-if [ "$PYDEVD_PYTHON_VERSION" = "2.6" ]; then
-    source activate build_env
-    conda install --yes numpy ipython pytest cython psutil pyqt=4 py=1.4.30
-    pip install pympler==0.5
-    pip install pathlib2
-    # Django 1.7 does not support Python 2.6
-else
-    # pytest-xdist not available for python 2.6
-    pip install pytest-xdist
-    pip install pympler
-fi
 
 if [ "$PYDEVD_PYTHON_VERSION" = "2.7" ]; then
     conda install --yes pyqt=4 gevent
