@@ -12,30 +12,29 @@ jobs:
       fail-fast: false
       matrix:
         name: [
-#           "windows-py27-plain",
+#           "windows-py27",
 #           "windows-py27-cython",
 #           
 #           "windows-py36-cython",
           
-          "ubuntu-py38-plain",
+          "ubuntu-py38",
           
 #           "ubuntu-py38-cython",
 #           "macos-py37-cython",
         ]
         
         include:
-#           - name: "windows-py27-plain"
+#           - name: "windows-py27"
 #             python: "2.7"
 #             os: windows-latest
-#           - name: "windows-py27-cython"
-#             python: "2.7"
-#             os: windows-latest
-#             cython: "YES"
+          - name: "windows-py27-cython"
+            python: "2.7"
+            os: windows-latest
 #           - name: "windows-py36-cython"
 #             python: "3.6"
 #             os: windows-latest
 #             cython: "YES"
-          - name: "ubuntu-py38-plain"
+          - name: "ubuntu-py38"
             python: "3.8"
             os: ubuntu-latest
 #           - name: "ubuntu-py38-cython"
