@@ -96,10 +96,14 @@ jobs:
         ./.travis/install_and_run_debug_py.sh
     - name: Run Python 2.7 tests
       if: contains(matrix.name, '27')
+      env:
+        PYTHONPATH: .
       run: |
         python -m pytest -rf --ignore=_pydevd_frame_eval/vendored
     - name: Run Python 3.x tests
-      if: "!contains(matrix.name, '27')"
+      if: ${{ !contains(matrix.name, '27') }}
+      env:
+        PYTHONPATH: .
       run: |
         python -m pytest -n auto -rf
 
