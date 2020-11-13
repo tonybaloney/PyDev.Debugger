@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         name: [
-          "windows-py27",
+          "windows-py27-checkdebug",
           "ubuntu-py27-cython",
 #           
 #           "windows-py36-cython",
@@ -24,7 +24,7 @@ jobs:
         ]
         
         include:
-          - name: "windows-py27"
+          - name: "windows-py27-checkdebug"
             python: "2.7"
             os: windows-latest
           - name: "ubuntu-py27-cython"
@@ -90,4 +90,16 @@ jobs:
       if: contains(matrix.name, 'cython')
       run: |
         python setup_cython.py build_ext --inplace
+    - name: Check debug
+      if: contains(matrix.name, 'checkdebug')
+      run: |
+        ./.travis/install_and_run_debug_py.sh
+    - name: Run Python 2.7 tests
+      if: contains(matrix.name, '27')
+      run: |
+        python -m pytest -rf --ignore=_pydevd_frame_eval/vendored
+    - name: Run Python 3.x tests
+      if: "!contains(matrix.name, '27')"
+      run: |
+        python -m pytest -n auto -rf
 
