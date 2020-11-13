@@ -12,15 +12,15 @@ jobs:
       fail-fast: false
       matrix:
         name: [
-          "windows-py27-plain",
-          "windows-py27-cython",
-          
-          "windows-py36-cython",
+#           "windows-py27-plain",
+#           "windows-py27-cython",
+#           
+#           "windows-py36-cython",
           
           "ubuntu-py38-plain",
           
-          "ubuntu-py38-cython",
-          "macos-py37-cython",
+#           "ubuntu-py38-cython",
+#           "macos-py37-cython",
         ]
         
         include:
@@ -55,3 +55,7 @@ jobs:
         python-version: ${{ matrix.python }}
     - name: Upgrade pip
       run: python -m pip install --upgrade pip
+    - name: set kernel.yama.ptrace_scope
+      run: sudo sysctl kernel.yama.ptrace_scope=0
+      if: contains(matrix.name, 'ubuntu')
+
