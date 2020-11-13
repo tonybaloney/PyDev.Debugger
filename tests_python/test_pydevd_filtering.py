@@ -66,10 +66,7 @@ def test_in_project_roots(tmpdir):
         check.append((os.path.join(check_path, 'a.py'), find))
 
     for check_path, find in check:
-        try:
-            assert files_filtering.in_project_roots(check_path) == find
-        except:
-            assert files_filtering.in_project_roots(check_path) == find
+        assert files_filtering.in_project_roots(check_path) == find
 
     files_filtering.set_project_roots([])
     files_filtering.set_library_roots([site_packages, site_packages_inside_project_dir])

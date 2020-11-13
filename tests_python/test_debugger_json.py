@@ -3151,7 +3151,7 @@ def test_source_mapping_just_my_code(case_setup):
         writer.finished_ok = True
 
 
-@pytest.mark.skipif(not TEST_CHERRYPY, reason='No CherryPy available.')
+@pytest.mark.skipif(not TEST_CHERRYPY or IS_WINDOWS, reason='No CherryPy available / not ok in Windows.')
 def test_process_autoreload_cherrypy(case_setup_multiprocessing, tmpdir):
     '''
     CherryPy does an os.execv(...) which will kill the running process and replace
@@ -3216,6 +3216,9 @@ cherrypy.quickstart(HelloWorld())
 
         server_socket = writer.server_socket
 
+        secondary_thread_log = []
+        secondary_thread_errors = []
+
         class SecondaryProcessWriterThread(AbstractWriterThread):
 
             TEST_FILE = writer.get_main_filename()
@@ -3224,39 +3227,48 @@ cherrypy.quickstart(HelloWorld())
         class SecondaryProcessThreadCommunication(threading.Thread):
 
             def run(self):
-                from tests_python.debugger_unittest import ReaderThread
-                expected_connections = 1
-                for _ in range(expected_connections):
-                    server_socket.listen(1)
-                    self.server_socket = server_socket
-                    new_sock, addr = server_socket.accept()
+                try:
+                    from tests_python.debugger_unittest import ReaderThread
+                    expected_connections = 1
+                    for _ in range(expected_connections):
+                        server_socket.listen(1)
+                        self.server_socket = server_socket
+                        new_sock, addr = server_socket.accept()
 
-                    reader_thread = ReaderThread(new_sock)
-                    reader_thread.name = '  *** Multiprocess Reader Thread'
-                    reader_thread.start()
+                        reader_thread = ReaderThread(new_sock)
+                        reader_thread.name = '  *** Multiprocess Reader Thread'
+                        reader_thread.start()
 
-                    writer2 = SecondaryProcessWriterThread()
+                        writer2 = SecondaryProcessWriterThread()
 
-                    writer2.reader_thread = reader_thread
-                    writer2.sock = new_sock
+                        writer2.reader_thread = reader_thread
+                        writer2.sock = new_sock
 
-                    writer2.write_version()
-                    writer2.write_add_breakpoint(break1_line)
-                    writer2.write_make_initial_run()
+                        writer2.write_version()
+                        writer2.write_add_breakpoint(break1_line)
+                        writer2.write_make_initial_run()
 
-                # Give it some time to startup
-                time.sleep(2)
-                t = writer.create_request_thread('http://127.0.0.1:%s/' % (port,))
-                t.start()
+                    secondary_thread_log.append('Initial run')
 
-                hit = writer2.wait_for_breakpoint_hit()
-                writer2.write_run_thread(hit.thread_id)
+                    # Give it some time to startup
+                    time.sleep(2)
+                    t = writer.create_request_thread('http://127.0.0.1:%s/' % (port,))
+                    t.start()
 
-                contents = t.wait_for_contents()
-                assert 'Hello World NEW!' in contents
+                    secondary_thread_log.append('Waiting for first breakpoint')
+                    hit = writer2.wait_for_breakpoint_hit()
+                    secondary_thread_log.append('Hit first breakpoint')
+                    writer2.write_run_thread(hit.thread_id)
 
-                t = writer.create_request_thread('http://127.0.0.1:%s/exit' % (port,))
-                t.start()
+                    contents = t.wait_for_contents()
+                    assert 'Hello World NEW!' in contents
+
+                    secondary_thread_log.append('Requesting exit.')
+                    t = writer.create_request_thread('http://127.0.0.1:%s/exit' % (port,))
+                    t.start()
+                except Exception as e:
+                    secondary_thread_errors.append('Error from secondary thread: %s' % (e,))
+                    raise
 
         secondary_process_thread_communication = SecondaryProcessThreadCommunication()
         secondary_process_thread_communication.start()
@@ -3278,9 +3290,18 @@ cherrypy.quickstart(HelloWorld())
         time.sleep(2)
         f.write(tmplt % dict(port=port, str='NEW'))
 
-        secondary_process_thread_communication.join(10)
-        if secondary_process_thread_communication.is_alive():
-            raise AssertionError('The SecondaryProcessThreadCommunication did not finish')
+        def check_condition():
+            return not secondary_process_thread_communication.is_alive()
+
+        def create_msg():
+            return 'Expected secondary thread to finish before timeout.\nSecondary thread log:\n%s\nSecondary thread errors:\n%s\n' % (
+                '\n'.join(secondary_thread_log), '\n'.join(secondary_thread_errors))
+
+        wait_for_condition(check_condition, msg=create_msg)
+
+        if secondary_thread_errors:
+            raise AssertionError('Found errors in secondary thread: %s' % (secondary_thread_errors,))
+
         writer.finished_ok = True
 
 
