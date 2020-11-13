@@ -82,6 +82,8 @@ jobs:
         python -m pip install trio
     - name: Check cython unchanged
       if: contains(matrix.name, 'checkbin')
+      env:
+        PYTHONPATH: .
       run: |
         python build_tools/build.py
         python build_tools/check_no_git_modifications.py
