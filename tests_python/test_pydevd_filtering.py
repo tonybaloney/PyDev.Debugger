@@ -66,7 +66,18 @@ def test_in_project_roots(tmpdir):
         check.append((os.path.join(check_path, 'a.py'), find))
 
     for check_path, find in check:
-        assert files_filtering.in_project_roots(check_path) == find
+        if files_filtering.in_project_roots(check_path) != find:
+            if find:
+                msg = 'Expected %s to be in the project roots.\nProject roots: %s\nLibrary roots: %s\n'
+            else:
+                msg = 'Expected %s NOT to be in the project roots.\nProject roots: %s\nLibrary roots: %s\n'
+
+            raise AssertionError(msg % (
+                check_path,
+                files_filtering._get_project_roots(),
+                files_filtering._get_library_roots(),
+                )
+            )
 
     files_filtering.set_project_roots([])
     files_filtering.set_library_roots([site_packages, site_packages_inside_project_dir])

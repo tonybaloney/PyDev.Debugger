@@ -173,7 +173,7 @@ def test_to_server_and_to_client(tmpdir):
             # Client and server are on windows.
             pydevd_file_utils.set_ide_os('WINDOWS')
 
-            test_dir = str(tmpdir.mkdir("Foo"))
+            test_dir = pydevd_file_utils.get_path_with_real_case(str(tmpdir.mkdir("Foo")))
             os.makedirs(os.path.join(test_dir, "Another"))
 
             in_eclipse = os.path.join(os.path.dirname(test_dir), 'Bar')
