@@ -19,7 +19,7 @@ jobs:
           
           "ubuntu-py38",
           
-#           "ubuntu-py38-cython",
+          "ubuntu-py38-cython-checkbin",
 #           "macos-py37-cython",
         ]
         
@@ -34,13 +34,12 @@ jobs:
 #             python: "3.6"
 #             os: windows-latest
 #             cython: "YES"
-          - name: "ubuntu-py38"
+          - name: "ubuntu-py38-trio"
             python: "3.8"
             os: ubuntu-latest
-#           - name: "ubuntu-py38-cython"
-#             python: "3.8"
-#             os: ubuntu-latest
-#             cython: "YES"
+          - name: "ubuntu-py38-cython-checkbin"
+            python: "3.8"
+            os: ubuntu-latest
 #           - name: "macos-py37-cython"
 #             python: "3.7"
 #             os: macos-latest
@@ -55,27 +54,39 @@ jobs:
     - name: Set kernel.yama.ptrace_scope
       run: sudo sysctl kernel.yama.ptrace_scope=0
       if: contains(matrix.name, 'ubuntu')
-    - name: Install Python deps
+    - name: Install common Python deps
       run: |
         python -m pip install --upgrade pip
-        python -m pip install wheel
-        python -m pip install cython
-        python -m pip install psutil
-        python -m pip install numpy
-        python -m pip install pytest
-        python -m pip install pytest-xdist
-        python -m pip install psutil
-        python -m pip install gevent
-        python -m pip install ipython
-        python -m pip install untangle
-        python -m pip install cherrypy
+        python -m pip install wheel --no-warn-script-location
+        python -m pip install cython --no-warn-script-location
+        python -m pip install psutil --no-warn-script-location
+        python -m pip install numpy --no-warn-script-location
+        python -m pip install pytest --no-warn-script-location
+        python -m pip install pytest-xdist --no-warn-script-location
+        python -m pip install psutil --no-warn-script-location
+        python -m pip install gevent --no-warn-script-location
+        python -m pip install ipython --no-warn-script-location
+        python -m pip install untangle --no-warn-script-location
+        python -m pip install cherrypy --no-warn-script-location
     - name: Install Python 2.7 deps
       if: contains(matrix.name, 'py27')
       run: |
-        python -m pip install PySide
+        python -m pip install PySide --no-warn-script-location
+        python -m pip install "django>=1.7,<1.8" --no-warn-script-location
+        python -m pip install pathlib2 --no-warn-script-location
     - name: Install Python 3.8 deps
       if: contains(matrix.name, 'py38')
       run: |
+        python -m pip install PySide2 --no-warn-script-location
+        python -m pip install django
         python -m pip install trio
-        python -m pip install PySide2
+    - name: Check cython unchanged
+      if: contains(matrix.name, 'checkbin')
+      run: |
+        python build_tools/build.py
+        python build_tools/check_no_git_modifications.py
+    - name: Create cython binaries
+      if: contains(matrix.name, 'cython')
+      run: |
+        python setup_cython.py build_ext --inplace
 
