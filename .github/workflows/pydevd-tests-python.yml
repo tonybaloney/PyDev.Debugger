@@ -34,7 +34,7 @@ jobs:
 #             python: "3.6"
 #             os: windows-latest
 #             cython: "YES"
-          - name: "ubuntu-py38-trio"
+          - name: "ubuntu-py38"
             python: "3.8"
             os: ubuntu-latest
           - name: "ubuntu-py38-cython-checkbin"
