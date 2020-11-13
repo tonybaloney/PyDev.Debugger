@@ -13,7 +13,7 @@ jobs:
       matrix:
         name: [
 #           "windows-py27",
-#           "windows-py27-cython",
+          "windows-py27-cython",
 #           
 #           "windows-py36-cython",
           
@@ -65,13 +65,17 @@ jobs:
         python -m pip install pytest
         python -m pip install pytest-xdist
         python -m pip install psutil
-        python -m pip install trio
         python -m pip install gevent
         python -m pip install ipython
         python -m pip install untangle
         python -m pip install cherrypy
+    - name: Install Python 2.7 deps
+      if: contains(matrix.name, 'py27')
+      run: |
+        python -m pip install PySide
+    - name: Install Python 3.8 deps
+      if: contains(matrix.name, 'py38')
+      run: |
+        python -m pip install trio
         python -m pip install PySide2
-#     - name: Install Python 2.7 deps
-#       if: contains(matrix.name, 'py27')
-#       run: |
 
