@@ -53,9 +53,22 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python }}
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
-    - name: set kernel.yama.ptrace_scope
+    - name: Set kernel.yama.ptrace_scope
       run: sudo sysctl kernel.yama.ptrace_scope=0
       if: contains(matrix.name, 'ubuntu')
+    - name: Install Python deps
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install wheel
+        python -m pip install cython
+        python -m pip install numpy
+        python -m pip install pytest
+        python -m pip install pytest-xdist
+        python -m pip install psutil
+        python -m pip install trio
+        python -m pip install gevent
+        python -m pip install ipython
+        python -m pip install untangle
+        python -m pip install cherrypy
+        python -m pip install -U PySide
 

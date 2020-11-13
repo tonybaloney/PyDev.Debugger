@@ -2,28 +2,12 @@ environment:
 
   matrix:
 
-    # For Python versions available on Appveyor, see
-    # http://www.appveyor.com/docs/installed-software#python
-    # The list here is complete (excluding Python 2.6, which
-    # isn't covered by this document) at the time of writing.
-
-    # Note: some envs commented out to have a faster test suite.
-
     - PYTHON_FOLDER: "C:\\Python27"
       PYDEVD_USE_CYTHON: YES
       TRIO: 0
     - PYTHON_FOLDER: "C:\\Python27"
       PYDEVD_USE_CYTHON: NO
       TRIO: 0
-
-    #- PYTHON_FOLDER: "C:\\Python33"
-    #- PYTHON_FOLDER: "C:\\Python34"
-    #- PYTHON_FOLDER: "C:\\Python35"
-    #- PYTHON_FOLDER: "C:\\Python27-x64"
-    #- PYTHON_FOLDER: "C:\\Python33-x64"
-    #  DISTUTILS_USE_SDK: "1"
-    #- PYTHON_FOLDER: "C:\\Python34-x64"
-    #  DISTUTILS_USE_SDK: "1"
 
     - PYTHON_FOLDER: "C:\\Python35-x64"
       PYDEVD_USE_CYTHON: YES
@@ -36,11 +20,6 @@ environment:
     - PYTHON_FOLDER: "C:\\Python38-x64"
       PYDEVD_USE_CYTHON: YES
       TRIO: 1
-
-    # Disable IronPython tests (must be investigated in appveyor).
-    #- PYTHON_FOLDER: "C:\\Python36-x64"
-    #  PYDEVD_USE_CYTHON: NO
-    #  TEST_IRONPYTHON: YES
 
 install:
   # Note: we can't use powershell for everything as it'll fail if anything is written to stderr (which is expected
