@@ -53,7 +53,7 @@ jobs:
         python-version: ${{ matrix.python }}
     - name: Install gdb and set kernel.yama.ptrace_scope
       run: |
-        sudo apt-get gdb
+        sudo apt-get install gdb
         sudo sysctl kernel.yama.ptrace_scope=0
       if: contains(matrix.name, 'ubuntu')
     - name: Install common Python deps
